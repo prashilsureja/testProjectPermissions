@@ -6,7 +6,10 @@ package com.job;
 public class Calculation {
 
 
+
+
   public static void main(String[] args) {
+    // Changing all bad code to good code.
     float a = 8.2f;
     float b = 30.13f;
 
