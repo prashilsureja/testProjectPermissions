@@ -1,0 +1,46 @@
+#!/usr/bin/env groovy
+node {
+    // Mark the code checkout 'stage'....
+    stage 'Checkout'
+
+    // git url: 'https://github.com/teamclairvoyant/test-jenkins-deployment.git'
+    git credentialsId: 'prashilsureja', url: 'https://github.com/teamclairvoyant/test-jenkins-deployment.git'
+    sh 'ls -alh'
+    // sh 'git pull'
+    // Mark the code build 'stage'....
+    stage 'Build and Unit test'
+    // Run the maven build
+    sh "mvn -Dmaven.test.failure.ignore clean package"
+    step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+    stage 'Integration test'
+    stage 'System test'
+    stage 'Operations test'
+    stage 'Dev Deploy'
+
+//    sh './deployToDev.sh'
+    sh 'echo "Deploying code to Dev Environment"'
+    sh 'sleep 5'
+
+    stage 'Q/A Approval'
+    timeout(time:5, unit:'DAYS') {
+        input message:'Approve deployment?', submitter: 'it-ops'
+    }
+    stage 'Security test'
+    stage 'Compliance test'
+    stage 'Q/A Deploy'
+
+//    sh './deployToQA.sh'
+    sh 'echo "Deploying code to Dev Environment"'
+    sh 'sleep 25'
+
+    stage 'Prod Approval'
+    stage 'Load Testing'
+    stage 'Security test'
+    stage 'Compliance test'
+    stage 'Prod Deploy'
+//    sh './deployToProd.sh'
+    sh 'echo "Deploying code to Dev Environment"'
+    sh 'sleep 50'
+
+
+}
